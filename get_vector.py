@@ -1,18 +1,17 @@
+import json
 import cv2
-from io import BytesIO
 from PIL import Image
 import os
 
 import numpy as np
 np.set_printoptions(precision=2)
 
-import requests
 import openface
 
 import flask
 from flask_jsontools import jsonapi
 from flask_api import status
-from flask import Flask, jsonify
+from flask import Flask, jsonify, make_response
 
 app = Flask(__name__)
 
@@ -20,7 +19,7 @@ app = Flask(__name__)
 
 modelDir = 'models'
 dlibModelDir = '/root/openface/models/dlib'
-openfaceModelDir = '/root/openface/curl http://docker.for.mac.localhost:5984/models/openface'
+openfaceModelDir = '/root/openface/models/openface/'
 
 dlibFacePredictor = os.path.join(dlibModelDir, "shape_predictor_68_face_landmarks.dat")
 align = openface.AlignDlib(dlibFacePredictor)
@@ -36,10 +35,9 @@ def getRep(image, imgDim=96):
 
     rgbImg = cv2.cvtColor(bgrImg, cv2.COLOR_BGR2RGB)
     bb = align.getLargestFaceBoundingBox(rgbImg)
-    import pdb; pdb.set_trace()
     alignedFace = align.align(imgDim, rgbImg, bb, landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
     rep = net.forward(alignedFace)
-    import pdb; pdb.set_trace()
+
     return rep
 
 
@@ -60,11 +58,9 @@ def get_vector():
     except:
         return jsonify({'error': 'error'})
 
-    import pdb; pdb.set_trace()
-
-    return jsonify({'vector': str(face)})
+    return {'vector': json.dumps(face.tolist())}
 
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True)
