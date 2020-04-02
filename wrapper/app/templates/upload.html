@@ -6,7 +6,7 @@
 <style>
 
     h1, h2, h3, h4, h5, h6 {
-        font-family: "Quando", "Playfair Display", Georgia, "Times New Roman", serif;
+        font-family: "Courier New";
         padding-top: 1rem;
     }
     .inputfile {
@@ -26,7 +26,7 @@
         border-color:#504947;
         color:#504947;
         border-radius:0;
-        font-family: "Quando";
+        font-family: "Courier New";
     }
 
     .bad {
@@ -40,17 +40,16 @@
         <div class="text-center form-group custom col-md-4"></div>
         <div class="text-center form-group custom col-md-4">
 
-            <h1>Upload your photo</h1>
-            <hr style="border-color:#504947;">
+<!--            <hr style="border-color:#504947;">-->
             <form method="post" action="" id="form-upload" enctype="multipart/form-data">
                 <div>
                     <input type="file" name="image" accept="image/jpeg, image/png" class="inputfile">
-                    <label for='form-upload' class='btn btn-outline-secondary butts'>Choose image from your Computer</label>
+                    <label for='form-upload' class='btn btn-outline-secondary butts'>Pick your photo!</label>
                 </div>
                 <br>
                 <button id="submit-image" type="submit" class="btn btn-outline-secondary butts"
                         form="form-upload" value="submit" aria-pressed="true">
-                    Upload Image to Server
+                    Submit your photo ;)
                 </button>
 
             </form>

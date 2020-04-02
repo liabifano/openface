@@ -1,4 +1,4 @@
-import os, sys, json
+import os, sys, json, datetime
 import pandas as pd
 import cv2
 from PIL import Image
@@ -15,44 +15,45 @@ from flask_jsontools import jsonapi
 from flask_api import status
 
 
-modelDir = 'models'
-dlibModelDir = '/root/openface/models/dlib'
-openfaceModelDir = '/root/openface/models/openface/'
+STATIC_PATH = '/root/openface/wrapper/app/static'
+IMAGES_PATH = os.path.join(STATIC_PATH, 'resources/photos')
+IMAGES_TMP_PATH = os.path.join(STATIC_PATH, 'tmp')
+PATH_VECTORS = os.path.join(STATIC_PATH, 'resources/vectors.json')
 
-dlibFacePredictor = os.path.join(dlibModelDir, "shape_predictor_68_face_landmarks.dat")
-align = openface.AlignDlib(dlibFacePredictor)
-
-networkModel = os.path.join(openfaceModelDir, 'nn4.small2.v1.t7')
-imgDim = 96
-net = openface.TorchNeuralNet(networkModel, imgDim)
-
-PATH_IMAGES = '/photos'
-PATH_VECTORS = os.path.join('/vectors', 'vectors.json')
-
-
-app = Flask(__name__, template_folder='templates')
+TEMPLATES_PATH = 'templates'
+MODEL_PATH = 'models'
+DLIB_MODEL_PATH = '/root/openface/models/dlib'
+OPENFACE_MODEL_DIR = '/root/openface/models/openface/'
+DLIBFACE_PREDICTOR_PATH = os.path.join(DLIB_MODEL_PATH, "shape_predictor_68_face_landmarks.dat")
+ALIGN = openface.AlignDlib(DLIBFACE_PREDICTOR_PATH)
+NN_MODEL_PATH = os.path.join(OPENFACE_MODEL_DIR, 'nn4.small2.v1.t7')
+IMG_DIM = 96
+NN_MODEL = openface.TorchNeuralNet(NN_MODEL_PATH, IMG_DIM)
 
 
-def get_vector(image, imgDim=96):
+app = Flask(__name__, template_folder=TEMPLATES_PATH, static_url_path=STATIC_PATH)
+
+
+def get_vector(image, align=ALIGN, model=NN_MODEL, img_dim=IMG_DIM):
     rgbImg = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     aligned = align.getLargestFaceBoundingBox(rgbImg)
-    alignedFace = align.align(imgDim, rgbImg, aligned, landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
-    rep = net.forward(alignedFace)
+
+    alignedFace = align.align(img_dim, rgbImg, aligned, landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
+    rep = model.forward(alignedFace)
 
     return rep
 
 
-def save_vectors(path_photos=PATH_IMAGES, path_vectors=PATH_VECTORS):
+def save_vectors(path_photos=IMAGES_PATH, path_vectors=PATH_VECTORS):
     vectors = {}
     photos = os.listdir(path_photos)
 
     for photo in photos:
         if photo!='.keep':
             path = os.path.join(path_photos, photo)
-            name = photo.split('.')[0]
             image = np.asarray(Image.open(path))
             vector = get_vector(image)
-            vectors[name] = list(vector)
+            vectors[photo] = list(vector)
 
     with open(path_vectors, 'w') as file:
         json.dump(vectors, file)
@@ -63,7 +64,6 @@ def get_doppelganger(target, path_vectors=PATH_VECTORS, k=6):
         d = f.read()
     vectors = pd.DataFrame(json.loads(d))
     matrix = np.transpose(vectors.values)
-
     distances = distance.cdist(target, matrix, "cosine")[0]
 
     idx = np.argpartition(distances, k)
@@ -72,9 +72,10 @@ def get_doppelganger(target, path_vectors=PATH_VECTORS, k=6):
     order = np.argsort(first_k_distances)
     first_k_idx = first_k_idx[order]
     first_k_distances = first_k_distances[order]
-    first_k_names = [vectors.columns.tolist()[i] for i in first_k_idx]
+    first_k_photos = [str(vectors.columns.tolist()[i]) for i in first_k_idx]
+    first_k_names = [x.split('.')[0] for x in first_k_photos]
 
-    return dict(zip(first_k_names, first_k_distances))
+    return zip(first_k_names, first_k_photos)
 
 
 @app.route('/', methods=['GET'])
@@ -90,11 +91,18 @@ def doppelganger():
 
     else:
         try:
-            image = Image.open(flask.request.files['image']).convert('RGB')
+            image = Image.open(flask.request.files['image'])
+            now = str(datetime.datetime.today())
+            image_path = os.path.join(IMAGES_TMP_PATH, '{}.png'.format(now))
+            image.save(image_path)
+
+            image = image.convert('RGB')
             image = np.asarray(image)
-            new_vector = get_vector(image, imgDim)
-            doppelgangers = get_doppelganger(new_vector)
-            return flask.render_template('doppelganger.html', names=doppelgangers)
+            new_vector = get_vector(image, img_dim=IMG_DIM)
+            new_vector = new_vector.reshape(1, len(new_vector))
+            names = get_doppelganger(new_vector)
+
+            return flask.render_template('doppelganger.html', names=names, image_path=image_path)
 
         except:
             return jsonify({'Error': 'Something bad happened'})
