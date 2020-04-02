@@ -1,3 +1,24 @@
+# About this fork 
+
+This fork wraps the openface library as a flask application where you can set you own pull of photos to predict and compare them.
+
+1. Put your photos (`.jpg`, `.png`) in `wrapper/app/static/resources/photos`:
+
+2. Inside the folder `wrapper/`, run:
+```console
+$ make build-openface   # builds the Dockerfile used by the application
+$ make get-vectors      # predicts and get vectors for your photos
+$ make run              # runs the application
+```
+
+If you need to debug something you can run:
+```console
+$ make bash-openface
+```
+
+Have fun! :D
+
+
 # OpenFace • [![Build Status][travis-image]][travis] [![Release][release-image]][releases] [![License][license-image]][license] [![Gitter][gitter-image]][gitter]
 
 *Free and open source face recognition with
