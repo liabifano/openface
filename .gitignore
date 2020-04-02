@@ -28,3 +28,9 @@ models/openface/*.pkl
 celeb-classifier*
 
 site
+
+wrapper/app/static/resources/photos/*.jpg
+wrapper/app/static/resources/photos/*.png
+wrapper/app/static/resources/vectors.json
+wrapper/app/static/resources/tmp/*.png
+wrapper/app/static/resources/tmp/*.jpg

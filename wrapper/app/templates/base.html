@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}Title{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3.v4.js" charset="utf-8"></script>
+
+    <link href="https://getbootstrap.com/docs/4.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        @import url(https://fonts.google.com/specimen/Quando?selection.family=Quando);
+        @import url(https://fonts.google.com/specimen/DM+Serif+Display);
+
+        .perfect{
+            background-color:#504947;
+            font-family: "Quando";
+            padding:0px 16px;
+            color: white;
+        }
+
+        .cut-text {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            width: 300px;
+            height: 1.2em;
+            white-space: nowrap;
+        }
+
+        .nice-bar{
+            font-family: "DM Serif Display";
+            text-transform: uppercase;
+        }
+
+        ::placeholder {
+            color: blue;
+        }
+
+        footer{
+            bottom : 0;
+        }
+
+    </style>
+
+
+    <nav class="navbar navbar-expand-md navbar-dark perfect";>
+        <a class="navbar-brand nice-bar" href="/">doppelgänger</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+
+        </div>
+    </nav>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+</head>
+<body>
+{% block body %}{% endblock %}
+</body>
+
+<footer class="text-muted  mt-auto py-3 perfect" style="border-color:#504947;">
+
+    <div class="container perfect" style='font-size:16px; text-align:center'>
+
+    </div>
+</footer>
+
+</html>

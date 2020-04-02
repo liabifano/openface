@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Doppeldanger{% endblock %}
+
+{% block body %}
+
+<style>
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: "Quando", "Playfair Display", Georgia, "Times New Roman", serif;
+        padding-top: 1rem;
+    }
+    .inputfile {
+        cursor: pointer;
+        width: 100%;
+        height: 2 rem;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+    }
+
+    .inputfile + label {
+        cursor: pointer; /* "hand" cursor */
+    }
+
+    .butts{
+        border-color:#504947;
+        color:#504947;
+        border-radius:0;
+        font-family: "Quando";
+    }
+
+    .bad {
+        padding-top:2rem;
+    }
+
+
+</style>
+<div class="container bad">
+    <div class="row mb-3" style='padding:50px'>
+        <div class="text-center form-group custom col-md-4"></div>
+        <div class="text-center form-group custom col-md-4">
+
+            <h1>Upload your photo</h1>
+            <hr style="border-color:#504947;">
+            <form method="post" action="" id="form-upload" enctype="multipart/form-data">
+                <div>
+                    <input type="file" name="image" accept="image/jpeg, image/png" class="inputfile">
+                    <label for='form-upload' class='btn btn-outline-secondary butts'>Choose image from your Computer</label>
+                </div>
+                <br>
+                <button id="submit-image" type="submit" class="btn btn-outline-secondary butts"
+                        form="form-upload" value="submit" aria-pressed="true">
+                    Upload Image to Server
+                </button>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
