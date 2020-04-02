@@ -25,11 +25,10 @@ RUN apt-get update && apt-get install -y \
 ADD . /root/openface
 RUN python -m pip install --upgrade --force pip
 RUN cd ~/openface && \
+    mkdir /vectors && \
+    mkdir /photos && \
     ./models/get-models.sh && \
     pip2 install -r requirements.txt && \
     python2 setup.py install && \
     pip2 install --user --ignore-installed -r demos/web/requirements.txt && \
     pip2 install -r training/requirements.txt
-
-EXPOSE 5000
-CMD python /root/openface/get_vector.py
