@@ -25,8 +25,6 @@ RUN apt-get update && apt-get install -y \
 ADD . /root/openface
 RUN python -m pip install --upgrade --force pip
 RUN cd ~/openface && \
-    mkdir /vectors && \
-    mkdir /photos && \
     ./models/get-models.sh && \
     pip2 install -r requirements.txt && \
     python2 setup.py install && \
