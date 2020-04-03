@@ -49,11 +49,13 @@ def save_vectors(path_photos=IMAGES_PATH, path_vectors=PATH_VECTORS):
     photos = os.listdir(path_photos)
 
     for photo in photos:
-        if photo!='.keep':
-            path = os.path.join(path_photos, photo)
+        path = os.path.join(path_photos, photo)
+        try:
             image = np.asarray(Image.open(path))
             vector = get_vector(image)
             vectors[photo] = list(vector)
+        except:
+            print('Error: {}'.format(photo))
 
     with open(path_vectors, 'w') as file:
         json.dump(vectors, file)
